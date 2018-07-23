@@ -17,6 +17,8 @@ struct Node* newNode(int);
 void insertNewNode(struct Node*, int);
 void inorder(struct Node*);
 void findPaths(struct Node*);
+void deleteNode(struct Node*, int);
+void deleteDeepest(struct Node*, struct Node*);
 
 struct Node* newNode(int key)
 {
@@ -93,6 +95,76 @@ void findPaths(struct Node* root)
 	sum = sum - root->key;
 }
 
+
+
+void deleteNode(struct Node* root, int del_key)
+{
+	queue <struct Node*> q;
+
+	q.push(root);
+	struct Node* temp, *key_node;
+
+	while (!q.empty())
+	{
+		temp = q.front();
+		q.pop();
+
+		if (temp->key == del_key)
+			key_node = temp;
+
+		if (temp->left)
+			q.push(temp->left);
+
+		if (temp->right)
+			q.push(temp->right);
+	}
+
+	int x = temp->key;
+	deleteDeepest(root, temp);
+	key_node->key = x;
+}
+
+void deleteDeepest(struct Node* root, struct Node* del_node)
+{
+	queue <struct Node*> q;
+	q.push(root);
+	struct Node* temp;
+
+	while (!q.empty())
+	{
+		temp = q.front();
+		q.pop();
+
+		if (temp->left)
+		{
+			if (temp->left == del_node)
+			{
+				delete(del_node);
+				return;
+			}
+
+			else
+			{
+				q.push(temp->left);
+			}
+		}
+
+		if (temp->right)
+		{
+			if (temp->right == del_node)
+			{
+				delete(del_node);
+				return;
+			} 		
+
+			else
+			{
+				q.push(temp->right);
+			}
+		}
+	}
+}
+
 int main()
 {
 	struct Node* root = newNode(1);
@@ -114,29 +186,6 @@ int main()
 	insertNewNode(root, 0);
 	insertNewNode(root, 1);
 
-
-
-    // root->left = newNode(2);
-    // root->left->right = newNode(1);
-    // root->left->right->left = newNode(5);
-    // root->left->right->left->left = newNode(7);
-    // root->left->left = newNode(4);
-    // root->left->left->right = newNode(19); //
-    // root->left->left->left = newNode(8);
-    // root->left->left->left->left = newNode(1);
-    // root->left->left->left->right = newNode(0);
-    // root->left->left->left->right->right = newNode(1);
-    // root->left->left->left->right->left = newNode(1);
-
-    // root->right = newNode(3);
-    // root->right->left = newNode(4);
-    // // root->right->left = newNode(5);
-    // root->right->right = newNode(9);
-    // root->right->right->right = newNode(9);
-
-    // root->right->right->left = newNode(3);
-    // root->right->left->left = newNode(8);
- 
     cout << "Inorder traversal before insertion:";
     inorder(root);
  
@@ -145,6 +194,12 @@ int main()
     cout << endl;
     cout << "Inorder traversal after insertion:";
     inorder(root);
+    findPaths(root);
+    cout << "\n\n\n\nTotal Paths: " << path_count/2 << "\n\n\n\n\n\n";
+    path_count = 0;
+    deleteNode(root, 3);
+    inorder(root);
+
     findPaths(root);
     cout << "\n\n\n\nTotal Paths: " << path_count/2 << "\n\n";
 
